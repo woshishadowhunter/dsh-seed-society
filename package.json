@@ -1,0 +1,28 @@
+{
+  "name": "dsh-yogacara-society",
+  "version": "1.0.0",
+  "description": "Yogacara eight-consciousness agent society for DeepSeek Harness: auditable double-loop runtime bridge, mneme memory consolidation tuning, MCP society tools, and six seed skills",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "cordis.patch.yml",
+    "index.js",
+    "skills",
+    "README.md"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek",
+    "harness",
+    "memory",
+    "agents",
+    "yogacara",
+    "mneme"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

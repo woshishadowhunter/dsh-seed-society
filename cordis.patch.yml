@@ -1,0 +1,59 @@
+# dsh-yogacara-society bundle patch — applied automatically when this plugin
+# is listed in a profile's `dsh.profile.bundles` (dsh plugin add does this).
+#
+# What this layer carries (all validated on 2026-08-24/25 on the reference
+# machine):
+#
+# 1) llm-deepseek route default fix — the DeepSeek adapter's modelInfoFor
+#    defaults an unconfigured reasoningEffort to HIGH, so the harness injects
+#    thinking:enabled + reasoning_effort:high into every call that does not
+#    pass an explicit effort (including mneme's autoDream). On whole-store
+#    consolidation batches the reasoning consumes the output budget and the
+#    decision JSON never arrives ("no json array in llm output"). Setting the
+#    route default to `off` sends thinking:disabled (plain text calls);
+#    explicit efforts from agent-default-model (e.g. max) still win per-call.
+- id: llm-deepseek
+  config:
+    reasoningEffort: off
+
+# 2) dsh-mneme consolidation tuning — autoDream on, schema-max output budget,
+#    deepseek-chat (the only model measured to emit valid decision JSON on
+#    140+ memory batches), session summarizer off to bound store growth.
+#    Requires @modusensus/dsh-mneme to be installed (installer enforces it).
+- id: dsh-mneme
+  config:
+    memoryDir: ~/.dsh/memory
+    autoInject: true
+    autoSummarize: false
+    maxInjectedItems: 5
+    importanceThreshold: 3
+    autoDream: true
+    dreamThresholdCount: 10
+    dreamThresholdChars: 5000
+    dreamDelayMs: 2000
+    dreamMaxTokens: 32768
+    dreamProvider: deepseek-official
+    dreamModel: deepseek-chat
+
+# 3) MCP society bridge — exposes the agent-society-loop runtime to the
+#    harness model as mcp__society__* tools (run/enqueue/status/knowledge/
+#    genome/experience/approve/self-test...). Requires the Python package:
+#    pip install 'agent-society-loop' (or run install-plugin.ps1 which does
+#    it). SOCIETY_PROJECT_DIR can point at a source checkout instead.
+- insert:
+    - id: mcp-society
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: society
+        transport: stdio
+        command: python
+        args:
+          - '-m'
+          - 'agent_society_loop.mcp_server'
+        env:
+          SOCIETY_PROJECT_DIR: !!js 'process.env.SOCIETY_PROJECT_DIR || ""'
+        toolCallTimeoutMs: 300000
+        failOnStartupError: false
+        reconnect:
+          enabled: true
+          maxAttempts: 5
