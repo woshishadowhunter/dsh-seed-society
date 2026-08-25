@@ -35,9 +35,14 @@ DSH**（新 bundle 层需要重新组合）。
 ```bash
 python -m pip install -e <repo>                          # 1. python 运行时
 dsh plugin --profile web add @modusensus/dsh-mneme       # 2. mneme 前提
-dsh plugin --profile web add <plugin-dir>                # 3. 本插件
+dsh plugin --profile web add github:woshishadowhunter/dsh-yogacara-society  # 3. 本插件
 # 4. 技能：复制 skills/ 下的六个目录到 ~/.dsh/skills/（或 ~/.agents/skills/）
 ```
+
+## 仓库
+
+- 主项目（运行时/文档/测试）：<https://github.com/woshishadowhunter/agent-society-loop>
+- 本插件：<https://github.com/woshishadowhunter/dsh-yogacara-society>
 
 ## 验证
 
@@ -50,11 +55,21 @@ dsh --profile web --dump-config | grep -E "mcp-society|reasoningEffort|dreamMaxT
 
 ## 发布到插件超市（可选）
 
-1. 把本目录推到一个公开 GitHub 仓库（根目录含 package.json 即可）；
-2. 在 [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
-   提交注册条目（name/owner/url/description/npm/category: memory）；
-3. 注册表快照更新后，用户即可 `dsh plugin --profile web add dsh-yogacara-society`
-   一键安装（npm 包名与仓库名一致）。
+在 [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
+提交注册条目：
+
+```json
+{
+  "name": "dsh-yogacara-society",
+  "owner": "woshishadowhunter",
+  "url": "https://github.com/woshishadowhunter/dsh-yogacara-society",
+  "category": "memory",
+  "description": { "en": "...", "zh": "..." }
+}
+```
+
+注册表快照更新后，用户即可 `dsh plugin --profile web add dsh-yogacara-society`
+一键安装（需先发布 npm 包，或在注册条目中用 github URL）。
 
 ## 边界
 
