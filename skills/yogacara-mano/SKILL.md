@@ -1,6 +1,6 @@
 ---
 name: yogacara-mano
-description: 意识·双循环技能：操作 agent-society-loop 的 LoopEngine 外/内双循环、goal 生命周期、任务图校验与重试修复，并对应 DSH 的 goal/subagent/workflow 工具的用法。当用户要求跑目标、编排任务、执行-评审-修复循环、中断恢复或讨论「意识/造作/串联」时使用。
+description: 意识·双循环技能：操作 seed-society 的 LoopEngine 外/内双循环、goal 生命周期、任务图校验与重试修复，并对应 DSH 的 goal/subagent/workflow 工具的用法。当用户要求跑目标、编排任务、执行-评审-修复循环、中断恢复或讨论「意识/造作/串联」时使用。
 whenToUse: 意识、双循环、goal 生命周期、任务图、执行评审修复、enqueue、worker、run、编排
 ---
 
@@ -35,21 +35,21 @@ created → planning → running → succeeded / failed / blocked
 ### 1. 离线演示（最小双循环证明）
 
 ```bash
-python -m agent_society_loop demo --db demo.db
+python -m seed_society demo --db demo.db
 ```
 
 第一次市场报告缺第三处证据 → 评审 FAIL（score 80 < 通过线或 defect 存在）
 → 缺陷入上下文 → 专家修复 → PASS。事件流可查：
 
 ```bash
-python -m agent_society_loop events quantum-mug-demo --db demo.db
+python -m seed_society events quantum-mug-demo --db demo.db
 ```
 
 ### 2. 跑自己的 goal 规范（确定性，可复现）
 
 ```bash
-python -m agent_society_loop run examples/goal-spec.json --db my-goal.db --json
-python -m agent_society_loop status evidence-brief-demo --db my-goal.db --json
+python -m seed_society run examples/goal-spec.json --db my-goal.db --json
+python -m seed_society status evidence-brief-demo --db my-goal.db --json
 ```
 
 任务图校验：ID 唯一、依赖存在、无环；非法规划在**任何执行之前**失败。
@@ -57,8 +57,8 @@ python -m agent_society_loop status evidence-brief-demo --db my-goal.db --json
 ### 3. 计划与执行分离（持久 worker，意识的行相）
 
 ```bash
-python -m agent_society_loop enqueue examples/goal-spec.json --db society.db --json
-python -m agent_society_loop worker run --worker-id local-a \
+python -m seed_society enqueue examples/goal-spec.json --db society.db --json
+python -m seed_society worker run --worker-id local-a \
   --agent-id spec-research --agent-id spec-writing \
   --max-tasks 3 --db society.db --json
 ```
@@ -74,7 +74,7 @@ tool 步有独立预算。配置端点：
 
 ```bash
 $env:MODEL_API_KEY="..."; $env:MODEL_ID="your-model"
-python -m agent_society_loop maintain owner/repo 123 --workspace . --db maintain.db --json
+python -m seed_society maintain owner/repo 123 --workspace . --db maintain.db --json
 ```
 
 ## DSH 侧的对应工具

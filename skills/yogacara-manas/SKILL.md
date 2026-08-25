@@ -1,6 +1,6 @@
 ---
 name: yogacara-manas
-description: 末那识·个体性技能：管理 agent-society-loop 的 AgentProfile 路由、绩效加权选择、champion/challenger 评估晋升与部署门禁，并说明 DSH persona/presets 的个体性对应。当用户要求「谁来做」、升级某个代理、查部署、讨论个体性格与路由时使用。
+description: 末那识·个体性技能：管理 seed-society 的 AgentProfile 路由、绩效加权选择、champion/challenger 评估晋升与部署门禁，并说明 DSH persona/presets 的个体性对应。当用户要求「谁来做」、升级某个代理、查部署、讨论个体性格与路由时使用。
 whenToUse: 末那识、个体性、我执、agent 路由、选择、evaluate、promote、deployment、persona、性格
 ---
 
@@ -35,14 +35,14 @@ score = 0.45 * success_rate
 ### 1. 查看个体与绩效
 
 ```bash
-python -m agent_society_loop agents --db demo.db --json
+python -m seed_society agents --db demo.db --json
 ```
 
 ### 2. 冠军/挑战者评估（不可变基准，不影响现行路由）
 
 ```bash
-python -m agent_society_loop evaluate examples/evaluation-spec.json --db evolution.db --json
-python -m agent_society_loop evaluations RUN_ID --db evolution.db --json
+python -m seed_society evaluate examples/evaluation-spec.json --db evolution.db --json
+python -m seed_society evaluations RUN_ID --db evolution.db --json
 ```
 
 晋升门槛（默认政策）：≥5 用例、无 critical 失败、通过率不降、均分增益
@@ -51,8 +51,8 @@ python -m agent_society_loop evaluations RUN_ID --db evolution.db --json
 ### 3. 晋升与部署门禁
 
 ```bash
-python -m agent_society_loop promote RUN_ID --by operator --db evolution.db --json
-python -m agent_society_loop deployments --db evolution.db --json
+python -m seed_society promote RUN_ID --by operator --db evolution.db --json
+python -m seed_society deployments --db evolution.db --json
 ```
 
 promote 时复检 agent/model 身份。此后该任务类型的路由锁定为精确

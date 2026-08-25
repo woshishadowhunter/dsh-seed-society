@@ -1,4 +1,4 @@
-# dsh-yogacara-society bundle patch — applied automatically when this plugin
+# dsh-seed-society bundle patch — applied automatically when this plugin
 # is listed in a profile's `dsh.profile.bundles` (dsh plugin add does this).
 #
 # What this layer carries (all validated on 2026-08-24/25 on the reference
@@ -35,10 +35,10 @@
     dreamProvider: deepseek-official
     dreamModel: deepseek-chat
 
-# 3) MCP society bridge — exposes the agent-society-loop runtime to the
+# 3) MCP society bridge — exposes the seed-society runtime to the
 #    harness model as mcp__society__* tools (run/enqueue/status/knowledge/
 #    genome/experience/approve/self-test...). Requires the Python package:
-#    pip install 'agent-society-loop' (or run install-plugin.ps1 which does
+#    pip install 'seed-society' (or run install-plugin.ps1 which does
 #    it). SOCIETY_PROJECT_DIR can point at a source checkout instead.
 - insert:
     - id: mcp-society
@@ -49,7 +49,7 @@
         command: python
         args:
           - '-m'
-          - 'agent_society_loop.mcp_server'
+          - 'seed_society.mcp_server'
         env:
           SOCIETY_PROJECT_DIR: !!js 'process.env.SOCIETY_PROJECT_DIR || ""'
         toolCallTimeoutMs: 300000

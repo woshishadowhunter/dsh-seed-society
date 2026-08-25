@@ -1,6 +1,6 @@
 ---
 name: yogacara-sila
-description: 戒律·护栏技能：规范 agent-society-loop 的全部安全性质——预算、审批、租约围栏、内容寻址、默认拒绝与不坏法边界，并对应 DSH 的 sandbox 模式与审批流。当用户遇到暂停审批、围栏过期、A2A 歧义、预算耗尽，或讨论「戒律/护栏/安全边界」时使用。
+description: 戒律·护栏技能：规范 seed-society 的全部安全性质——预算、审批、租约围栏、内容寻址、默认拒绝与不坏法边界，并对应 DSH 的 sandbox 模式与审批流。当用户遇到暂停审批、围栏过期、A2A 歧义、预算耗尽，或讨论「戒律/护栏/安全边界」时使用。
 whenToUse: 戒律、护栏、审批、approve、reject、fencing、围栏、预算、sandbox、安全边界、blocked、paused
 ---
 
@@ -8,7 +8,7 @@ whenToUse: 戒律、护栏、审批、approve、reject、fencing、围栏、预�
 
 ## 本体论
 
-唯识修行有戒；Agent Society Loop 的全部安全性质就是它的戒律层——保证七识的
+唯识修行有戒；Seed Society 的全部安全性质就是它的戒律层——保证七识的
 造作**不坏种子、不改标准、不欺审计**。戒律不是八识之一，而是八识得以运行的
 边界。每条戒律都有对应的可执行证明（self-test），不是口头约定。
 
@@ -28,9 +28,9 @@ whenToUse: 戒律、护栏、审批、approve、reject、fencing、围栏、预�
 ### 1. 审批流（身业戒的现行）
 
 ```bash
-python -m agent_society_loop approvals GOAL_ID --db maintain.db --json
-python -m agent_society_loop approve APPROVAL_ID --by operator --db maintain.db
-python -m agent_society_loop reject APPROVAL_ID --by operator --db maintain.db
+python -m seed_society approvals GOAL_ID --db maintain.db --json
+python -m seed_society approve APPROVAL_ID --by operator --db maintain.db
+python -m seed_society reject APPROVAL_ID --by operator --db maintain.db
 ```
 
 待批时 goal `paused`（不消耗预算）；批准后 `resume`，拒绝后 goal `failed`。
@@ -40,7 +40,7 @@ python -m agent_society_loop reject APPROVAL_ID --by operator --db maintain.db
 ### 2. 围栏自证（妄语戒）
 
 ```bash
-python -m agent_society_loop scheduler self-test --json
+python -m seed_society scheduler self-test --json
 ```
 
 双连接实测五个不变量：独占 claim、精确所有者续租、接管后 token 递增、
@@ -49,9 +49,9 @@ python -m agent_society_loop scheduler self-test --json
 ### 3. 过期回收与观照
 
 ```bash
-python -m agent_society_loop scheduler workers --db society.db --json
-python -m agent_society_loop scheduler reap --at 2026-07-16T00:00:10+00:00 --db society.db --json
-python -m agent_society_loop health --db society.db --json
+python -m seed_society scheduler workers --db society.db --json
+python -m seed_society scheduler reap --at 2026-07-16T00:00:10+00:00 --db society.db --json
+python -m seed_society health --db society.db --json
 ```
 
 过期 claim 只回收到 `pending`，新 claim 是新身份 + 更大 token。同步引擎在
@@ -60,8 +60,8 @@ goal 有活跃 claim 时拒绝接管（围栏优先于恢复）。
 ### 4. 全量安装时验收
 
 ```bash
-python -m agent_society_loop product self-test --json
-python -m agent_society_loop a2a self-test --json
+python -m seed_society product self-test --json
+python -m seed_society a2a self-test --json
 ```
 
 ### 5. 风险处理指引

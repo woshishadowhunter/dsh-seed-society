@@ -1,6 +1,6 @@
 ---
 name: yogacara-alaya
-description: 阿赖耶识·种子库技能：管理 agent-society-loop 的 knowledge/experience/genome/performance 种子，执行熏习与现行，把每次 reviewed attempt 蒸馏为可复用教训，维护个人种子契合工作流的数据层。当用户要求存知识、蒸馏经验、写基因组、查绩效，或讨论「种子/熏习/现行」时使用。
+description: 阿赖耶识·种子库技能：管理 seed-society 的 knowledge/experience/genome/performance 种子，执行熏习与现行，把每次 reviewed attempt 蒸馏为可复用教训，维护个人种子契合工作流的数据层。当用户要求存知识、蒸馏经验、写基因组、查绩效，或讨论「种子/熏习/现行」时使用。
 whenToUse: 种子、熏习、现行、阿赖耶识、知识库、经验蒸馏、genome、performance、个人契合数据层
 ---
 
@@ -24,8 +24,8 @@ whenToUse: 种子、熏习、现行、阿赖耶识、知识库、经验蒸馏、
 ### 1. 立知识种子
 
 ```bash
-python -m agent_society_loop knowledge add "产品事实" "概念围绕即热、清晰控件与安全日常使用。" --tags market_analysis --db society.db
-python -m agent_society_loop knowledge search "市场 增长" --db society.db --json
+python -m seed_society knowledge add "产品事实" "概念围绕即热、清晰控件与安全日常使用。" --tags market_analysis --db society.db
+python -m seed_society knowledge search "市场 增长" --db society.db --json
 ```
 
 检索按「查询词元重叠 + 标签重叠×2」排序，任务类型标签自动参与
@@ -34,8 +34,8 @@ python -m agent_society_loop knowledge search "市场 增长" --db society.db --
 ### 2. 立本体种子（genome）
 
 ```bash
-python -m agent_society_loop genome set user-analyst examples/genome-user-analyst.json --db society.db --json
-python -m agent_society_loop genome show user-analyst --db society.db --json
+python -m seed_society genome set user-analyst examples/genome-user-analyst.json --db society.db --json
+python -m seed_society genome show user-analyst --db society.db --json
 ```
 
 genome 文件是 JSON（参考 `examples/`），字段经 `AgentGenome.create` 严格校验：
@@ -48,8 +48,8 @@ genome 文件是 JSON（参考 `examples/`），字段经 `AgentGenome.create` �
 ### 3. 熏习（experience distill）
 
 ```bash
-python -m agent_society_loop experience distill quantum-mug-demo --db demo.db --json
-python -m agent_society_loop experience list --agent-id market-analyst --db demo.db --json
+python -m seed_society experience distill quantum-mug-demo --db demo.db --json
+python -m seed_society experience list --agent-id market-analyst --db demo.db --json
 ```
 
 蒸馏规则（`experience.py`，纯确定性）：PASS → 「成功模式」lesson；FAIL →
@@ -63,8 +63,8 @@ experience（`MemoryManager.build_context` 的 `experience` 段）。这就是
 （设计文档 `docs/memory-learning-design.md`）：
 
 ```bash
-python -m agent_society_loop consolidate GOAL_ID --db demo.db          # 干跑：只出报告
-python -m agent_society_loop consolidate GOAL_ID --db demo.db --apply  # 落盘势力变动
+python -m seed_society consolidate GOAL_ID --db demo.db          # 干跑：只出报告
+python -m seed_society consolidate GOAL_ID --db demo.db --apply  # 落盘势力变动
 ```
 
 每个 attempt 重放时计算：**显著性 salience**（0.4 基础 + 0.4 预测误差 +
@@ -82,11 +82,11 @@ LLM 巩固 + 快照哈希审计）。与本引擎的分工：**我们出确定�
 
 ```bash
 # 下行：晋升门产出的语义知识 → mneme memories 表（幂等、不复活 forget/archive 行）
-python -m agent_society_loop mneme sync --db society.db --mneme-dir ~/.dsh/memory --push
+python -m seed_society mneme sync --db society.db --mneme-dir ~/.dsh/memory --push
 # 上行：mneme 的 dream 总结/人工决策 → society 知识种子（去重、带 mneme 标签）
-python -m agent_society_loop mneme import --db society.db --mneme-dir ~/.dsh/memory --apply
+python -m seed_society mneme import --db society.db --mneme-dir ~/.dsh/memory --apply
 # 单命令联动：巩固 + 推送 + 遗忘联动（衰减种子 importance 跌破 3 即停止注入）
-python -m agent_society_loop consolidate GOAL --db society.db --mneme-dir ~/.dsh/memory --apply
+python -m seed_society consolidate GOAL --db society.db --mneme-dir ~/.dsh/memory --apply
 ```
 
 **遗忘=停止现行**：经验种子势力被 `consolidate --apply` 衰减后，`mneme sync`
@@ -97,7 +97,7 @@ python -m agent_society_loop consolidate GOAL --db society.db --mneme-dir ~/.dsh
 ### 4. 种子相续（genome recombine）
 
 ```bash
-python -m agent_society_loop genome recombine child-v2 --parents parent-a parent-b --task-type analysis --db society.db --json
+python -m seed_society genome recombine child-v2 --parents parent-a parent-b --task-type analysis --db society.db --json
 ```
 
 子代继承双亲谱系与世代、**取最严风险政策**、只取双亲共享的工具画像；高分

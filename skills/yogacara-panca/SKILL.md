@@ -1,6 +1,6 @@
 ---
 name: yogacara-panca
-description: 前五识·根尘相接技能：规范 agent-society-loop 的眼耳鼻舌身五根——工具门（tools/mcp/workspace）、网络边界（http_transport/a2a/github）与 DSH 的 read/grep/web_search/pwsh/vision 工具的对应关系与使用纪律。当用户要读文件、搜信息、执行命令、调用外部工具或讨论「五识/根尘」时使用。
+description: 前五识·根尘相接技能：规范 seed-society 的眼耳鼻舌身五根——工具门（tools/mcp/workspace）、网络边界（http_transport/a2a/github）与 DSH 的 read/grep/web_search/pwsh/vision 工具的对应关系与使用纪律。当用户要读文件、搜信息、执行命令、调用外部工具或讨论「五识/根尘」时使用。
 whenToUse: 前五识、眼耳鼻舌身、工具调用、MCP、A2A、工作区、读文件、搜索、外部工具接入
 ---
 
@@ -43,17 +43,17 @@ whenToUse: 前五识、眼耳鼻舌身、工具调用、MCP、A2A、工作区、
 ### 1. 工作区检查（眼识，只读即时现行）
 
 ```bash
-python -m agent_society_loop maintain owner/repo 123 --workspace . --db maintain.db --json
+python -m seed_society maintain owner/repo 123 --workspace . --db maintain.db --json
 ```
 
 ### 2. 受审写与命名检查（身识，审批+摘要绑定）
 
 ```bash
-python -m agent_society_loop maintain owner/repo 123 \
+python -m seed_society maintain owner/repo 123 \
   --workspace . --db ../maintain.db --apply \
   --check "tests=python -m unittest discover -s tests -v" --json
 # 运行暂停在每次内容寻址写与命名检查前：
-python -m agent_society_loop approve APPROVAL_ID --by operator --db ../maintain.db
+python -m seed_society approve APPROVAL_ID --by operator --db ../maintain.db
 ```
 
 ### 3. MCP 工具适配（外部根接入）

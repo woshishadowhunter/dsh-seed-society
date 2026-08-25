@@ -1,6 +1,6 @@
-# dsh-yogacara-society
+# dsh-seed-society
 
-唯识论八识架构的 Agent Society 插件：把 agent-society-loop 的可审计双循环
+唯识论八识架构的 Agent Society 插件：把 seed-society 的可审计双循环
 运行时、dsh-mneme 记忆巩固调优、MCP 工具桥与六个种子技能，固化为一个
 可直接安装的 DSH 插件包。
 
@@ -26,7 +26,7 @@
 powershell -ExecutionPolicy Bypass -File integrations\dsh\install-plugin.ps1
 ```
 
-脚本依次：pip 安装 agent-society-loop → 装 mneme → 装本插件（pnpm add +
+脚本依次：pip 安装 seed-society → 装 mneme → 装本插件（pnpm add +
 bundles 对账）→ 同步技能到 `~/.dsh/skills` → dump-config 校验。**装完重启
 DSH**（新 bundle 层需要重新组合）。
 
@@ -35,14 +35,14 @@ DSH**（新 bundle 层需要重新组合）。
 ```bash
 python -m pip install -e <repo>                          # 1. python 运行时
 dsh plugin --profile web add @modusensus/dsh-mneme       # 2. mneme 前提
-dsh plugin --profile web add github:woshishadowhunter/dsh-yogacara-society  # 3. 本插件
+dsh plugin --profile web add github:woshishadowhunter/dsh-seed-society  # 3. 本插件
 # 4. 技能：复制 skills/ 下的六个目录到 ~/.dsh/skills/（或 ~/.agents/skills/）
 ```
 
 ## 仓库
 
-- 主项目（运行时/文档/测试）：<https://github.com/woshishadowhunter/agent-society-loop>
-- 本插件：<https://github.com/woshishadowhunter/dsh-yogacara-society>
+- 主项目（运行时/文档/测试）：<https://github.com/woshishadowhunter/seed-society>
+- 本插件：<https://github.com/woshishadowhunter/dsh-seed-society>
 
 ## 验证
 
@@ -60,15 +60,15 @@ dsh --profile web --dump-config | grep -E "mcp-society|reasoningEffort|dreamMaxT
 
 ```json
 {
-  "name": "dsh-yogacara-society",
+  "name": "dsh-seed-society",
   "owner": "woshishadowhunter",
-  "url": "https://github.com/woshishadowhunter/dsh-yogacara-society",
+  "url": "https://github.com/woshishadowhunter/dsh-seed-society",
   "category": "memory",
   "description": { "en": "...", "zh": "..." }
 }
 ```
 
-注册表快照更新后，用户即可 `dsh plugin --profile web add dsh-yogacara-society`
+注册表快照更新后，用户即可 `dsh plugin --profile web add dsh-seed-society`
 一键安装（需先发布 npm 包，或在注册条目中用 github URL）。
 
 ## 边界

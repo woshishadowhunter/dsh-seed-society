@@ -1,6 +1,6 @@
 ---
 name: yogacara-society
-description: 唯识论八识架构总纲：按阿赖耶识/末那识/意识/前五识/戒律组织 agent-society-loop 运行时与 DeepSeek Harness 的插件社会。当用户提及唯识、八识、agent society、多智能体编排，或需要把这套运行时作为插件接入 harness、执行「个人种子契合」工作流时使用。
+description: 唯识论八识架构总纲：按阿赖耶识/末那识/意识/前五识/戒律组织 seed-society 运行时与 DeepSeek Harness 的插件社会。当用户提及唯识、八识、agent society、多智能体编排，或需要把这套运行时作为插件接入 harness、执行「个人种子契合」工作流时使用。
 whenToUse: 唯识论架构、八识、agent society 插件体系、种子契合工作流、yogacara 系列技能导航
 ---
 
@@ -31,21 +31,21 @@ agent 的能力与性格**通过文件约束、通过熏习完善**；这些文�
 ## 插件清单（机器可读真源）
 
 ```bash
-python -m agent_society_loop plugins --json          # 全部 28 个插件
-python -m agent_society_loop plugins --describe      # 五识组完整地图
+python -m seed_society plugins --json          # 全部 28 个插件
+python -m seed_society plugins --describe      # 五识组完整地图
 ```
 
-对应源码：`src/agent_society_loop/plugins.py`。清单是声明性元数据：命名现有
+对应源码：`src/seed_society/plugins.py`。清单是声明性元数据：命名现有
 模块的识归属，**绝不改变导入、权限、预算或验收标准**。
 
 ## 快速开始（离线可复现）
 
 ```bash
 $env:PYTHONPATH="src"                                # 仓库内运行时
-python -m agent_society_loop demo --db demo.db       # 量子杯五步验证
-python -m agent_society_loop events quantum-mug-demo --db demo.db
-python -m agent_society_loop consolidate quantum-mug-demo --db demo.db   # 睡眠回放巩固
-python -m agent_society_loop product self-test --json
+python -m seed_society demo --db demo.db       # 量子杯五步验证
+python -m seed_society events quantum-mug-demo --db demo.db
+python -m seed_society consolidate quantum-mug-demo --db demo.db   # 睡眠回放巩固
+python -m seed_society product self-test --json
 ```
 
 预期：`Goal quantum-mug-demo: succeeded (4/4 tasks, 1 retries)`。第一次市场报告
