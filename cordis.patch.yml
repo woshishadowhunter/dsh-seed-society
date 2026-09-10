@@ -1,39 +1,44 @@
 # dsh-seed-society bundle patch — applied automatically when this plugin
 # is listed in a profile's `dsh.profile.bundles` (dsh plugin add does this).
 #
-# What this layer carries (all validated on 2026-08-24/25 on the reference
-# machine):
+# Policy (2026-09-10): ZERO mneme-initiated LLM calls. mneme's background
+# consolidation (autoDream) and its session summarizer are both OFF; every
+# LLM-triggering path mneme 0.7.x exposes is explicitly disabled below so a
+# future default flip cannot silently re-enable one. Memory consolidation is
+# owned by this project's deterministic engine instead:
+#     seed-society consolidate GOAL --db society.db --mneme-dir ~/.dsh/memory
+# It needs no model, cannot fail on provider quirks, and drives the same
+# mneme importance gate (forgetting = injection stops).
 #
-# 1) llm-deepseek route default fix — the DeepSeek adapter's modelInfoFor
-#    defaults an unconfigured reasoningEffort to HIGH, so the harness injects
-#    thinking:enabled + reasoning_effort:high into every call that does not
-#    pass an explicit effort (including mneme's autoDream). On whole-store
-#    consolidation batches the reasoning consumes the output budget and the
-#    decision JSON never arrives ("no json array in llm output"). Setting the
-#    route default to `off` sends thinking:disabled (plain text calls);
-#    explicit efforts from agent-default-model (e.g. max) still win per-call.
+# mneme is still used for the two capabilities that never call a model:
+#   - autoInject: high-importance seeds enter session context
+#   - the Markdown mirror: human-readable/editable memory sovereignty
+
+# 1) llm-deepseek route default: reasoningEffort off sends thinking:disabled
+#    for calls that do not pass an explicit effort. Explicit values from
+#    agent-default-model still win per call.
 - id: llm-deepseek
   config:
     reasoningEffort: off
 
-# 2) dsh-mneme consolidation tuning — autoDream on, schema-max output budget,
-#    deepseek-chat (the only model measured to emit valid decision JSON on
-#    140+ memory batches), session summarizer off to bound store growth.
-#    Requires @modusensus/dsh-mneme to be installed (installer enforces it).
+# 2) dsh-mneme with every LLM path disabled.
 - id: dsh-mneme
   config:
     memoryDir: ~/.dsh/memory
+    # Injection + mirror stay on (no model involved).
     autoInject: true
-    autoSummarize: false
     maxInjectedItems: 5
     importanceThreshold: 3
-    autoDream: true
-    dreamThresholdCount: 10
-    dreamThresholdChars: 5000
-    dreamDelayMs: 2000
-    dreamMaxTokens: 32768
+    # --- no-LLM policy: all four background model paths are OFF ---
+    autoDream: false
+    autoSummarize: false
+    sleepModeEnabled: false
+    entityExtractionEnabled: false
+    # Kept explicit so re-enabling dream later is a one-line change; these
+    # only take effect when autoDream is turned back on.
     dreamProvider: deepseek-official
     dreamModel: deepseek-chat
+    dreamMaxTokens: 32768
 
 # 3) MCP society bridge — exposes the seed-society runtime to the
 #    harness model as mcp__society__* tools (run/enqueue/status/knowledge/
