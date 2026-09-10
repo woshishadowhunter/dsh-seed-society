@@ -11,11 +11,25 @@ test("package.json declares the dsh bundle patch", () => {
   assert.equal(manifest.dsh?.bundle?.patch, "./cordis.patch.yml");
 });
 
-test("bundle patch carries the memory consolidation fixes", () => {
+test("bundle patch enforces the zero-LLM mneme policy", () => {
+  const patch = readFileSync(join(root, "cordis.patch.yml"), "utf8");
+  // Every mneme background path that calls a model must be explicitly off.
+  for (const flag of [
+    "autoDream: false",
+    "autoSummarize: false",
+    "sleepModeEnabled: false",
+    "entityExtractionEnabled: false",
+  ]) {
+    assert.ok(patch.includes(flag), `missing ${flag}`);
+  }
+  // Injection and mirror stay enabled: they never call a model.
+  assert.match(patch, /autoInject: true/);
+  assert.match(patch, /maxInjectedItems: 5/);
+});
+
+test("bundle patch keeps the bridge and the deepseek effort default", () => {
   const patch = readFileSync(join(root, "cordis.patch.yml"), "utf8");
   assert.match(patch, /reasoningEffort: off/);
-  assert.match(patch, /dreamMaxTokens: 32768/);
-  assert.match(patch, /dreamModel: deepseek-chat/);
   assert.match(patch, /serverName: society/);
   assert.match(patch, /seed_society\.mcp_server/);
 });
