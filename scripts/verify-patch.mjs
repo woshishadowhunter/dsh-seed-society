@@ -14,11 +14,15 @@ if (manifest.dsh?.bundle?.patch !== "./cordis.patch.yml") {
 
 const patch = readFileSync(join(root, "cordis.patch.yml"), "utf8");
 for (const expected of [
-  "reasoningEffort: off",           // llm-deepseek route default fix
-  "dreamMaxTokens: 32768",          // mneme consolidation output budget
-  "dreamModel: deepseek-chat",      // measured-valid consolidation route
-  "serverName: society",            // MCP bridge namespace
-  "seed_society.mcp_server",        // MCP server module
+  "reasoningEffort: off",              // llm-deepseek route default
+  // zero-LLM policy: every mneme background model path disabled
+  "autoDream: false",
+  "autoSummarize: false",
+  "sleepModeEnabled: false",
+  "entityExtractionEnabled: false",
+  "autoInject: true",                  // injection stays (no model involved)
+  "serverName: society",               // MCP bridge namespace
+  "seed_society.mcp_server",           // MCP server module
 ]) {
   if (!patch.includes(expected)) failures.push(`patch missing: ${expected}`);
 }
