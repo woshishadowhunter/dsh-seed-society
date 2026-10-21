@@ -1,31 +1,10 @@
 # Architecture
 
 `dsh-seed-society` is a configuration-and-bridge plugin for DeepSeek Harness.
-It ships no runtime of its own; it makes three things true about a profile the
-moment it is installed:
+It ships no runtime of its own; it makes two things true about a profile the
+moment it is installed.
 
-## 1. Memory consolidation actually works (bundle patch)
-
-The DeepSeek adapter (`@deepseek-ai/dsh-llm-deepseek`) defaults an unconfigured
-`reasoningEffort` to HIGH, so the harness injects `thinking:enabled +
-reasoning_effort:high` into every call that does not pass an explicit effort —
-including mneme's autoDream. On whole-store consolidation batches the reasoning
-consumes the output budget and the decision JSON never arrives (`no json array
-in llm output`, observed 57 consecutive failures). Setting the route default to
-`off` sends `thinking:disabled` (plain text calls); explicit efforts from
-`agent-default-model` still win per call.
-
-## 2. mneme consolidates at scale (bundle patch)
-
-- `dreamMaxTokens: 32768` — schema max, enough headroom for 140+ memory
-  batches (measured: valid decision JSON at 16384 AND 32768 tokens).
-- `dreamModel: deepseek-chat` — the only route measured to keep the decision
-  array format on large batches.
-- `autoSummarize: false` — bounds store growth (session summarizer off).
-- `autoInject: true`, `importanceThreshold: 3`, `maxInjectedItems: 5` —
-  defaults preserved explicitly (an id-targeted patch replaces the entry).
-
-## 3. The society runtime is bridged in (MCP insert)
+## 1. The society runtime is bridged in (MCP insert)
 
 An `@deepseek-ai/dsh-mcp-client` instance named `society` spawns
 `python -m seed_society.mcp_server` (part of the
@@ -35,12 +14,35 @@ events/knowledge/genome/experience/evaluate/approve/self-test/health/metrics.
 The server is zero-dependency stdio JSON-RPC, shells out to the society CLI
 without a shell, holds no secrets, and never bypasses approval gates.
 
-## 4. Six seed skills
+## 2. Six seed skills
 
 `skills/yogacara-*` are SKILL.md bundles (society 总纲, alaya 种子库, manas
 个体性, mano 双循环, panca 前五识, sila 戒律). The installer mirrors them to
 `~/.dsh/skills` (or `~/.agents/skills`) so the harness discovers them like any
 hand-written skill.
+
+## Why the bundle does not patch `llm-deepseek` or `dsh-mneme`
+
+Versions 1.0.0–1.1.0 carried two id-targeted layers: a route-level
+`reasoningEffort: off` and a full mneme config (`autoDream: false`,
+`dreamMaxTokens: 32768`, `dreamModel: deepseek-chat`). Both are wrong on the
+0.2 kernel:
+
+- The loader replaces the whole `config` of an id-targeted row — it never deep
+  merges — so a plugin that overrides a package it does not own either wipes
+  that package's own defaults or silently loses to a later layer. When the row
+  is absent the layer is skipped with `patch: entry "<id>" not found`.
+- mneme 0.9.x owns dream effort itself (`dreamReasoningEffort`, default `low`)
+  and sets its output budget to the schema maximum (131072). Pinning `32768`
+  lowers a budget upstream explicitly asks callers not to lower.
+- The `reasoningEffort: off` fix existed because the 0.1 adapter defaulted
+  unconfigured effort to HIGH. On 0.2 the route default is the user's own
+  `llm-deepseek` settings, and turning thinking off for every call that omits
+  an effort is a behaviour change this plugin has no business making.
+
+Memory behaviour therefore belongs to mneme's defaults plus the profile's
+`cordis.patch.yml`; the deterministic path (`seed-society consolidate`) stays
+available and needs no model at all.
 
 ## Boundaries
 

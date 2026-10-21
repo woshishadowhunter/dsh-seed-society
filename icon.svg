@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Seed Society">
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#16232b"/>
+  <g fill="none" stroke="#d9a441" stroke-width="1.6" stroke-linecap="round">
+    <circle cx="32" cy="32" r="15"/>
+    <path d="M32 17v6M32 41v6M17 32h6M41 32h6M21.4 21.4l4.2 4.2M38.4 38.4l4.2 4.2M42.6 21.4l-4.2 4.2M25.6 38.4l-4.2 4.2"/>
+  </g>
+  <circle cx="32" cy="32" r="3.2" fill="#d9a441"/>
+</svg>

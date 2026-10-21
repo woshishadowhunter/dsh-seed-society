@@ -1,24 +1,29 @@
 # dsh-seed-society
 
-唯识论八识架构的 Agent Society 插件：把 seed-society 的可审计双循环
-运行时、dsh-mneme 记忆巩固调优、MCP 工具桥与六个种子技能，固化为一个
-可直接安装的 DSH 插件包。
+唯识论八识架构的 Agent Society 插件：把 seed-society 的可审计双循环运行时接成
+`mcp__society__*` 工具，并随包提供六个种子技能。
 
 ## 包含内容（安装后自动生效）
 
 | 层 | 内容 | 载体 |
 | --- | --- | --- |
-| 记忆巩固修复 | `llm-deepseek.reasoningEffort: off`（autoDream 根因修复，实测 57 次失败→成功） | bundle patch |
-| 记忆巩固调优 | mneme：autoDream on、32768 token、deepseek-chat、会话总结关 | bundle patch |
-| MCP 工具桥 | `mcp__society__*`（run/enqueue/status/knowledge/genome/experience/approve…） | mcp-client 实例 |
+| MCP 工具桥 | `mcp__society__*`（run/enqueue/status/knowledge/genome/experience/approve…） | `dsh-mcp-client` 实例（`insert`） |
 | 种子技能 | `yogacara-society/alaya/manas/mano/panca/sila` 六个 SKILL.md | 随包 + 镜像到 `~/.dsh/skills` |
+| 插件元数据 | 插件名、描述、图标（插件管理/设置页直接读取） | `locale/en.json`、`locale/zh.json`、`icon.svg` |
 
-## 前置条件
+**明确不做**：不改写 `llm-deepseek` 或 `dsh-mneme` 的配置。0.2 的 loader 对
+带 `id` 的层是整段替换 `config`（不做深合并），所以跨包改写会覆盖对方自己的
+默认值；目标行不存在时还会警告 `patch: entry "<id>" not found` 并整层跳过。
+记忆侧怎么配，归 mneme 自己的默认值与该 profile 的 patch 层。
 
-- DSH（含 `@deepseek-ai/dsh-llm-deepseek`，基础包自带）；
-- Python 3.10+（MCP 桥与运行时）；
-- `@modusensus/dsh-mneme`（安装脚本自动装；注意超市注册表里的 `dsh-mneme`
-  名字是错的，真实包名是作用域的）。
+## 兼容性
+
+- DSH 0.2.x：`engines.dsh` 为 `>=0.2.0-rc.1 <0.3.0-0`。0.2 的 loader 只认
+  `engines.dsh`（有它就不再检查 peerDependencies），并按 includePrerelease
+  比对，所以 `0.2.1-rc.2` 可用，0.1.x 与 0.3 会被判为 incompatible 后跳过。
+- Python 3.10+（MCP 桥与运行时）。
+- `@modusensus/dsh-mneme` 可选：装了就由它负责记忆注入与巩固，与本文插件互不
+  改写。
 
 ## 安装（一条命令）
 
@@ -26,32 +31,75 @@
 powershell -ExecutionPolicy Bypass -File integrations\dsh\install-plugin.ps1
 ```
 
-脚本依次：pip 安装 seed-society → 装 mneme → 装本插件（pnpm add +
-bundles 对账）→ 同步技能到 `~/.dsh/skills` → dump-config 校验。**装完重启
+脚本依次：pip 安装 seed-society（并验证 `seed_society.mcp_server` 可导入）→
+装 mneme → 装本插件（pnpm add + bundles 对账）→ 同步技能到 `~/.dsh/skills` →
+dump-config 校验（缺行或出现 `[dsh-seed-society]` 警告即失败）。**装完重启
 DSH**（新 bundle 层需要重新组合）。
 
 ### 手动安装
 
+从 GitHub 安装（分发方式）：
+
 ```bash
-python -m pip install -e <repo>                          # 1. python 运行时
-dsh plugin --profile web add @modusensus/dsh-mneme       # 2. mneme 前提
-dsh plugin --profile web add github:woshishadowhunter/dsh-seed-society  # 3. 本插件
-# 4. 技能：复制 skills/ 下的六个目录到 ~/.dsh/skills/（或 ~/.agents/skills/）
+python -m pip install -e <seed-society 仓库>        # 1. python 运行时
+dsh plugin --profile web add @modusensus/dsh-mneme  # 2. mneme（可选）
+dsh plugin --profile web add github:woshishadowhunter/dsh-seed-society
 ```
+
+本地开发时把最后一行换成 `dsh plugin --profile web add <path-to-this-plugin>`。
+技能由安装脚本（或主仓库的 `integrations/dsh/sync-skills.ps1`）镜像到
+`~/.dsh/skills`；只装插件不镜像技能也能得到 `mcp__society__*` 工具，六个
+SKILL.md 只是告诉模型怎么用这套运行时。
+
+不想装插件、只想要 MCP 桥：把
+[`integrations/dsh/cordis.patch.example.yml`](../../cordis.patch.example.yml)
+的 `insert` 块并入 profile 的 `cordis.patch.yml`。
+
+## 验证
+
+```bash
+dsh --profile web --dump-config 2>&1 | grep -E "mcp-society|serverName: society"
+node --test test/plugin.test.mjs && node scripts/verify-patch.mjs
+```
+
+重启后：
+
+- 模型工具里出现 `mcp__society__*`（`society_health` 返回 `ready: true`）；
+- dump-config 的 stderr 里没有 `[dsh-seed-society]` 警告；
+- `llm-deepseek` 与 `dsh-mneme` 两行与本插件安装前一致（本插件不碰它们）。
+
+## 记忆侧：确定性巩固仍可用
+
+插件不再替 mneme 决定梦巩固策略。想完全不触发 mneme 的 LLM 路径时，用本项目的
+确定性引擎做巩固（不需要模型）：
+
+```bash
+seed-society consolidate GOAL --db society.db --mneme-dir ~/.dsh/memory --apply
+```
+
+若确实要调整 mneme，请在 **profile 的** `cordis.patch.yml` 里写 `- id: dsh-mneme`
+并**把该行需要的键写全**（整段替换），例如：
+
+```yaml
+- id: dsh-mneme
+  config:
+    autoDream: true
+    dreamProvider: deepseek-official
+    dreamModel: deepseek-flash
+    dreamReasoningEffort: "off"   # 只压推理，不动 dreamMaxTokens 预算
+```
+
+`dreamMaxTokens` 建议保持 mneme 的默认上限（0.9.x 为 131072）；调低会挤掉决策
+JSON 的输出预算，这是 2026-08 那一轮 `no json array in llm output` 的直接原因。
 
 ## 仓库
 
 - 主项目（运行时/文档/测试）：<https://github.com/woshishadowhunter/seed-society>
 - 本插件：<https://github.com/woshishadowhunter/dsh-seed-society>
 
-## 验证
-
-```bash
-dsh --profile web --dump-config | grep -E "mcp-society|reasoningEffort|dreamMaxTokens"
-# 重启后：
-#  - 模型工具里出现 mcp__society__* 
-#  - mneme 的 autoDream 继续巩固（dream_runs 出现 degraded/ok 行）
-```
+插件真源在主项目 `integrations/dsh/plugin/dsh-seed-society`；插件仓库由
+`git subtree` 发布（主项目 `integrations/dsh/publish-plugin.ps1`）。请把改动
+提到主项目，不要只改插件仓库，否则下一次发布会覆盖。
 
 ## 发布到插件超市（可选）
 

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Seed Society · 种子社会",
+    "description": "把 seed-society 的可审计双循环运行时接成 mcp__society__* 工具，并随包提供六个唯识种子技能。只插入自己的 MCP 桥，不改写 llm-deepseek 或 mneme 的配置。"
+  }
+}
